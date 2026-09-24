@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="bingbot" content="noindex, nofollow">
+<title>ЧКП — помощь и подписки</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<style>
+  :root, [data-theme="dark"] {
+    --bg: #0d1117;
+    --bg-soft: #161b22;
+    --bg-softer: #1c2330;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --border: #2d333b;
+    --accent: #58a6ff;
+    --accent-soft: rgba(88, 166, 255, 0.12);
+    --ok: #3fb950;
+    --err: #f85149;
+  }
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --bg-soft: #f6f8fa;
+    --bg-softer: #eef1f4;
+    --text: #24292f;
+    --text-dim: #57606a;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --accent-soft: rgba(9, 105, 218, 0.08);
+    --ok: #1a7f37;
+    --err: #cf222e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background 0.25s, color 0.25s;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 0 20px 64px; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0; margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { font-weight: 600; font-size: 15px; letter-spacing: 0.2px; }
+  .brand span { color: var(--accent); }
+  #themeBtn {
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+    font-size: 16px; display: grid; place-items: center;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  #themeBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+  h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .lede { color: var(--text-dim); font-size: 15px; margin-bottom: 32px; }
+
+  /* Subscription finder */
+  .card {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  .card h2 { font-size: 17px; margin-bottom: 4px; }
+  .card .sub { color: var(--text-dim); font-size: 14px; margin-bottom: 16px; }
+  .row { display: flex; gap: 10px; }
+  #idInput {
+    flex: 1; min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #idInput:focus { border-color: var(--accent); }
+  #idInput::placeholder { color: var(--text-dim); opacity: 0.7; }
+  button.primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  button.primary:hover { opacity: 0.88; }
+
+  .result { margin-top: 16px; display: none; }
+  .result.show { display: block; }
+  .result.error { border-left: 3px solid var(--err); padding-left: 12px; color: var(--err); font-size: 14px; }
+  .result.ok .linkbox {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    position: relative;
+  }
+  .result .hint { color: var(--text-dim); font-size: 13px; margin-top: 10px; }
+  .copybtn {
+    margin-top: 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .copybtn:hover { border-color: var(--accent); }
+  .copybtn.done { color: var(--ok); }
+
+  /* FAQ */
+  .faq h2 { font-size: 17px; margin-bottom: 16px; }
+  details {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  details[open] { border-color: var(--accent); }
+  summary {
+    padding: 15px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+";
+    color: var(--text-dim);
+    font-size: 19px;
+    font-weight: 400;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+  .ans { padding: 0 18px 16px; font-size: 14.5px; color: var(--text-dim); }
+  .ans p { margin-bottom: 10px; }
+  .ans p:last-child { margin-bottom: 0; }
+  .ans strong { color: var(--text); font-weight: 600; }
+  .ans ol, .ans ul { padding-left: 20px; margin-bottom: 10px; }
+  .ans li { margin-bottom: 5px; }
+  .ans code {
+    background: var(--bg-softer);
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--accent);
+  }
+  .ans a { color: var(--accent); text-decoration: none; }
+  .ans a:hover { text-decoration: underline; }
+
+  /* Contact */
+  .contact {
+    margin-top: 32px;
+    padding: 20px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 14.5px;
+  }
+  .contact strong { display: block; margin-bottom: 4px; font-size: 15px; }
+  .contact a { color: var(--accent); text-decoration: none; }
+  .contact a:hover { text-decoration: underline; }
+
+  footer {
+    margin-top: 40px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    .row { flex-direction: column; }
+    button.primary { width: 100%; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">📡 <span>ЧКП</span> · помощь</div>
+    <button id="themeBtn" title="Сменить тему" aria-label="Сменить тему">☀️</button>
+  </header>
+
+  <h1>Всё, что нужно знать</h1>
+  <p class="lede">Своя ссылка на подключение, ответы на частые вопросы и что делать, если что-то сломалось.</p>
+
+  <!-- Подписка -->
+  <section class="card">
+    <h2>Моя ссылка на подключение</h2>
+    <p class="sub">Введите свой ID (он указан в вашей подписке в приложении). Нажмите «Получить».</p>
+    <div class="row">
+      <input id="idInput" type="number" inputmode="numeric" placeholder="Ваш ID, например 5" autocomplete="off" min="1">
+      <button class="primary" id="getBtn">Получить ссылку</button>
+    </div>
+    <div class="result" id="result"></div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Частые вопросы</h2>
+
+    <details>
+      <summary>Как подключиться?</summary>
+      <div class="ans">
+        <p>1. Получите свою ссылку в блоке выше (нужен ваш ID).</p>
+        <p>2. Откройте клиентское приложение и выберите «Добавить подписку» (или «Add subscription»).</p>
+        <p>3. Вставьте ссылку в поле и подтвердите. Список серверов подгрузится сам — выберите любой и нажмите «Подключить».</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Какие приложения подходят?</summary>
+      <div class="ans">
+        <ul>
+          <li><strong>Android:</strong> v2rayNG, Streisand</li>
+          <li><strong>iPhone / iPad:</strong> Streisand, FoXray</li>
+          <li><strong>Windows:</strong> v2rayN, Streisand</li>
+          <li><strong>macOS:</strong> Streisand, FoXray</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Где взять своё ID?</summary>
+      <div class="ans">
+        <p>ID указан в подписке — откройте приложение, где у вас уже вставлена ссылка, и посмотрите там. Если не нашли — напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, я напомню.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Не могу подключиться, что делать?</summary>
+      <div class="ans">
+        <p>Пройдите по шагам:</p>
+        <ol>
+          <li>Проверьте обычное интернет-соединение (откройте любой сайт без VPN).</li>
+          <li>Убедитесь, что вставили именно свою ссылку (из блока выше, а не чужую).</li>
+          <li>Обновите подписку в приложении: обычно кнопка «Обновить» / «Refresh» рядом со списком серверов.</li>
+          <li>Попробуйте выбрать другой сервер из списка — один может быть временно перегружен.</li>
+          <li>Перезапустите приложение, в крайнем случае — телефон.</li>
+        </ol>
+        <p>Если ничего не помогло — напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, я помогу разобраться (укажите название приложения, какой сервер пробовали, есть ли ошибка на экране).</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Связь работает плохо: тормозит, обрывается</summary>
+      <div class="ans">
+        <p>Почти всегда помогает смена сервера — выберите другой из списка и подключитесь заново. Нагрузка на серверы неравномерна, и свободный обычно есть.</p>
+        <p>Также проверьте, что у вас сам Wi-Fi/мобильный интернет работает нормально — VPN не улучшает базовое соединение, а только его перенаправляет.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Обновил подписку, но ничего не поменялось</summary>
+      <div class="ans">
+        <p>После продления сделайте так:</p>
+        <ol>
+          <li>В приложении нажмите «Обновить подписку» — не просто перезапустите, а именно обновите.</li>
+          <li>Подождите 1–2 минуты и проверьте список серверов: сроки и доступность должны обновиться.</li>
+          <li>Если срок в приложении всё ещё просрочен — напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, укажите ваш ID — я проверю со своей стороны.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details>
+      <summary>Потерял доступ / сменил телефон, что теперь?</summary>
+      <div class="ans">
+        <p>Ничего страшного: ваша подписка не привязана к телефону. Установите приложение на новом, получите свою ссылку в блоке выше по ID и подключитесь заново. Старое устройство при этом перестанет засчитываться.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- Контакты -->
+  <div class="contact">
+    <strong>Не нашли ответ?</strong>
+    Напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>. Укажите свой ID и опишите проблему — помогу.
+  </div>
+
+  <footer>Обновления подписки и изменения в работе появляются здесь первыми.</footer>
+</div>
+
+<script>
+  // ---------- Тема ----------
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  applyTheme(theme);
+
+  themeBtn.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    localStorage.setItem('theme', next);
+  });
+
+  function applyTheme(t) {
+    root.dataset.theme = t;
+    themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+  }
+
+// ---------- Загрузка данных ----------
+let users = null;
+let usersLoaded = false;
+
+async function loadUsers() {
+  try {
+    const r = await fetch('users.json');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch { return null; }
+}
+
+// ---------- Поиск подписки ----------
+const idInput = document.getElementById('idInput');
+const getBtn = document.getElementById('getBtn');
+const result = document.getElementById('result');
+
+getBtn.addEventListener('click', lookup);
+idInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+async function lookup() {
+  const id = parseInt(idInput.value.trim(), 10);
+
+  if (isNaN(id) || id < 1) {
+    return showError('Введите корректный ID (число).');
+  }
+
+  result.className = 'result show';
+  result.innerHTML = '<div style="color:var(--text-dim);font-size:14px">Загружаю…</div>';
+
+  try {
+    if (!usersLoaded) {
+      const payload = await loadUsers();
+      if (!payload) throw new Error('Не удалось загрузить файл с данными');
+      users = payload.users || {};
+      usersLoaded = true;
+    }
+
+    const encoded = users[id];
+    if (!encoded) {
+      return showError('ID ' + id + ' не найден. Проверьте номер — или напишите lumbra2010@gmail.com.');
+    }
+
+    const link = atob(encoded);
+    showLink(link);
+  } catch (e) {
+    showError('Ошибка: ' + (e.message || 'Попробуйте позже.'));
+  }
+}
+
+function showLink(link) {
+  result.className = 'result show ok';
+  result.innerHTML =
+    '<div class="linkbox" id="linkBox">' + escapeHtml(link) + '</div>' +
+    '<button class="copybtn" id="copyBtn">📋 Скопировать ссылку</button>' +
+    '<div class="hint">Вставьте её в приложении в поле «Подписка» (Add subscription) — и подключайтесь.</div>';
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    copyLink(link, this);
+  });
+}
+
+function showError(msg) {
+  result.className = 'result show error';
+  result.textContent = msg;
+}
+
+  function copyLink(text, btn) {
+    const done = () => {
+      btn.textContent = '✓ Скопировано';
+      btn.classList.add('done');
+      setTimeout(() => { btn.textContent = '📋 Скопировать ссылку'; btn.classList.remove('done'); }, 2000);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { alert('Скопируйте вручную: ' + text); }
+    document.body.removeChild(ta);
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+</script>
+</body>
+</html>
