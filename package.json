@@ -1,5 +1,6 @@
 {
   "devDependencies": {
-    "netlify-cli": "^27.9.0"
+    "netlify-cli": "^27.9.0",
+    "wrangler": "^4.139.0"
   }
 }
