@@ -1,7 +1,7 @@
-name = "chkp-users"
+name = "chkp-v3"
 main = "worker.js"
 compatibility_date = "2024-12-01"
 
 [[kv_namespaces]]
 binding = "USERS_KV"
-id = "cc40b1f5ca174c678987dcbedd60c7d5"
+id = "c3382a6081f749cfab26a58252e8e02b"
