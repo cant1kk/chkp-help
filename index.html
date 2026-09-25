@@ -337,24 +337,40 @@
   }
 
 // ---------- Загрузка данных ----------
-const WORKER_URL = "https://raw.githubusercontent.com/cant1kk/chkp-help/main/users.json";
-const CACHE_BUST = Date.now();
+const ENCRYPTED_B64 = "usGOJAYZuX6BqfdF6NokwfWTBRDcA1/YtqWuEPioELXsnkZMGKkpPBSNOSSLyuKqKuy0gorjz02RiAXXwmXDuMRGTl0xLHNOsWfGQSX44a3bwI2Pk6lAcQJgy7wsDcl71JI6qpkTm+bKH/PzPZZO2RN32d2BMCUWccf11Nid7MFE3U3iLKKqo/VWhfJ5VxoHyluwQ8nuTqyvWyTT0Y53MoJMx3VGKthtoi/xuPYrsZ5wV18umCKAIu6YX+DmgVD+xZkDx3RvZb88dLjuBZTYLhA76fNcJwtZeYQCcLeIZqc3PSsD1MFp2MRwjmeo8R/GyKdTCe5iNwase9cg+woESydp9HexNyWb7KDOgcL7ZPrHKSLIDOzWGM/qj/7tTeNtmy7yjNNLmyDL4pWTrXBUlxG8X17kfrKaDwRCKoJXCBU/DgAMTt1xJVMlYile9/7KSdjTitKakPjlY9p+9TGRT4lGfnZWfBxsWUr3LOVO4+4YHL54IqoiQsLEujYArHRUjqc819v8jY8/FFyllnx7wPayxKxmIo0a/V1rd42d+pHmnUeAd05x/2sLhBeZ8osFM0Uo9vUaO0SxuVehUg5L65zAaEiKaMW0ikFGUfF5y4bqUJakd2eTnCBiFykor4skiM6QDtQEej+Edh5tcs24g/DXdKDaUuhzRZdFDXHrysgaUV5wtfak//RZiuGA/Cc1x2iMjuYHKlw86Z7jIZ2jI+g4XBoty9JbsjUszsn9q3KeJe0GezNoTY9TyszwXn1l1omDnKTrx2V90oWfxNkXba9Ek7CtyJ4e6pYVQnB7ujmd7xJMujapntNRqhRYPzafjWwsUKbsPIP4suA+XXbs3RmsI2SM0UMGAQbRBXi07CxV0Xdn/iLEhSbnj7SN5DKG4jcklpXq0Twk6yl8Y+4p5j1bt4ue7TVxqYoHNhXktQ8pV/L9hZ9bA1pGkMLeUkID2JVtZsbF+XuOKt4xKonmow==";
+const DECRYPTION_KEY = "chkp-super-secret-key-2024-long-enough-for-aes";
 
 let users = null;
 let usersLoaded = false;
 
-async function loadUsers() {
+async function decryptData() {
   try {
-    const r = await fetch(`${WORKER_URL}?v=${CACHE_BUST}`);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return await r.json();
-  } catch { return null; }
+    const keyData = new TextEncoder().encode(DECRYPTION_KEY.slice(0, 32).padEnd(32, '0'));
+    const iv = new Uint8Array(16);
+    const encrypted = Uint8Array.from(atob(ENCRYPTED_B64), c => c.charCodeAt(0));
+    
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw', keyData, { name: 'AES-CBC' }, false, ['decrypt']
+    );
+    
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-CBC', iv }, cryptoKey, encrypted
+    );
+    
+    return JSON.parse(new TextDecoder().decode(decrypted));
+  } catch (e) {
+    console.error('Decryption failed:', e);
+    return null;
+  }
 }
 
 async function fetchUserLink(id) {
-  const data = await loadUsers();
-  if (!data || !data[id]) return null;
-  return data[id];
+  if (!usersLoaded) {
+    users = await decryptData();
+    usersLoaded = true;
+  }
+  if (!users || !users[id]) return null;
+  return users[id];
 }
 
 // ---------- Поиск подписки ----------
