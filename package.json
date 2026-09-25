@@ -1,6 +1,9 @@
 {
-  "devDependencies": {
-    "netlify-cli": "^27.9.0",
-    "wrangler": "^4.139.0"
+  "name": "chkp-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
   }
 }

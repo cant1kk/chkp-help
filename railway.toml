@@ -1,0 +1,11 @@
+[project]
+name = "chkp-api"
+runtime = "nodejs20"
+
+[build]
+command = "npm install"
+
+[deploy]
+start_command = "npm start"
+healthcheck_path = "/api/users"
+restart_policy = "on-failure"

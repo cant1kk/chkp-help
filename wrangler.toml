@@ -1,4 +1,4 @@
-name = "chkp-v3"
+name = "chkp-help"
 main = "worker.js"
 compatibility_date = "2024-12-01"
 
