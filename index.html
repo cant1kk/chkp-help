@@ -335,13 +335,14 @@
 
 // ---------- Загрузка данных ----------
 const WORKER_URL = "https://chkp-v3.lumbra2010.workers.dev";
+const CACHE_BUST = Date.now();
 
 let users = null;
 let usersLoaded = false;
 
 async function loadUsers() {
   try {
-    const r = await fetch(`${WORKER_URL}/users`);
+    const r = await fetch(`${WORKER_URL}/users?v=${CACHE_BUST}`);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
     // Worker возвращает { users: ["1", "2", ...] }, нам нужно получить каждую ссылку отдельно
@@ -351,7 +352,7 @@ async function loadUsers() {
 
 async function fetchUserLink(id) {
   try {
-    const r = await fetch(`${WORKER_URL}/user/${id}`);
+    const r = await fetch(`${WORKER_URL}/user/${id}?v=${CACHE_BUST}`);
     if (!r.ok) return null;
     const data = await r.json();
     return data.link;
