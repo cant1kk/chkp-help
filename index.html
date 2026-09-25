@@ -380,18 +380,32 @@ async function lookup() {
   result.className = 'result show';
   result.innerHTML = '<div style="color:var(--text-dim);font-size:14px">Загружаю…</div>';
 
+  // DEBUG: force visible test
+  const debugInfo = document.createElement('div');
+  debugInfo.style.cssText = 'color:#f85149;font-size:12px;margin-top:8px;padding:8px;background:rgba(248,81,73,0.1);border-radius:4px;';
+  debugInfo.textContent = '[DEBUG] Запрос к ' + WORKER_URL + '/user/' + id;
+  result.appendChild(debugInfo);
+
   try {
-    const link = await fetchUserLink(id);
-    console.log("fetchUserLink result:", id, link);
+    const url = WORKER_URL + '/user/' + id + '?v=' + CACHE_BUST;
+    debugInfo.textContent += ' | URL: ' + url;
+    const r = await fetch(url);
+    debugInfo.textContent += ' | Status: ' + r.status;
+    if (!r.ok) {
+      debugInfo.textContent += ' | HTTP Error!';
+      return showError('Ошибка сети: ' + r.status);
+    }
+    const data = await r.json();
+    debugInfo.textContent += ' | Data: ' + JSON.stringify(data);
+    const link = data.link;
     if (!link) {
-      result.innerHTML += '<div style="margin-top:8px;color:var(--err)">[DEBUG] link=null для ID=' + id + '</div>';
+      debugInfo.textContent += ' | link=null';
       return showError('ID ' + id + ' не найден. Проверьте номер — или напишите lumbra2010@gmail.com.');
     }
 
     showLink(link);
   } catch (e) {
-    console.error("lookup error:", e);
-    result.innerHTML += '<div style="margin-top:8px;color:var(--err)">[DEBUG] ошибка: ' + e.message + '</div>';
+    debugInfo.textContent += ' | Exception: ' + e.message;
     showError('Ошибка: ' + (e.message || 'Попробуйте позже.'));
   }
 }
