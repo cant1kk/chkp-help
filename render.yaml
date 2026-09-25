@@ -1,6 +1,0 @@
-appType: web
-buildCommand: npm install
-startCommand: node server.js
-env:
-  - key: NODE_ENV
-    value: production

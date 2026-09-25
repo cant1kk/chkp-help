@@ -1,8 +1,8 @@
 node_modules/
-.netlify/
-package-lock.json
 .env
 *.log
 .DS_Store
-
-.vercel
+.netlify/
+.vercel/
+.wrangler/
+data.js
