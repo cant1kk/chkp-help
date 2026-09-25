@@ -382,12 +382,14 @@ async function lookup() {
 
   try {
     const link = await fetchUserLink(id);
+    console.log("fetchUserLink result:", id, link);
     if (!link) {
       return showError('ID ' + id + ' не найден. Проверьте номер — или напишите lumbra2010@gmail.com.');
     }
 
     showLink(link);
   } catch (e) {
+    console.error("lookup error:", e);
     showError('Ошибка: ' + (e.message || 'Попробуйте позже.'));
   }
 }
