@@ -337,7 +337,7 @@
   }
 
 // ---------- Загрузка данных ----------
-const WORKER_URL = "https://chkp-v3.lumbra2010.workers.dev";
+const WORKER_URL = "https://cant1kk.github.io/chkp-help/users.json";
 const CACHE_BUST = Date.now();
 
 let users = null;
@@ -345,21 +345,16 @@ let usersLoaded = false;
 
 async function loadUsers() {
   try {
-    const r = await fetch(`${WORKER_URL}/users?v=${CACHE_BUST}`);
+    const r = await fetch(`${WORKER_URL}?v=${CACHE_BUST}`);
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    const data = await r.json();
-    // Worker возвращает { users: ["1", "2", ...] }, нам нужно получить каждую ссылку отдельно
-    return data.users || [];
+    return await r.json();
   } catch { return null; }
 }
 
 async function fetchUserLink(id) {
-  try {
-    const r = await fetch(`${WORKER_URL}/user/${id}?v=${CACHE_BUST}`);
-    if (!r.ok) return null;
-    const data = await r.json();
-    return data.link;
-  } catch { return null; }
+  const data = await loadUsers();
+  if (!data || !data[id]) return null;
+  return data[id];
 }
 
 // ---------- Поиск подписки ----------
