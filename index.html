@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
 <meta name="robots" content="noindex, nofollow">
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="bingbot" content="noindex, nofollow">
@@ -21,6 +22,7 @@
     --border: #2d333b;
     --accent: #58a6ff;
     --accent-soft: rgba(88, 166, 255, 0.12);
+    --accent-text: #0d1117;
     --ok: #3fb950;
     --err: #f85149;
   }
@@ -33,6 +35,7 @@
     --border: #d0d7de;
     --accent: #0969da;
     --accent-soft: rgba(9, 105, 218, 0.08);
+    --accent-text: #ffffff;
     --ok: #1a7f37;
     --err: #cf222e;
   }
@@ -43,6 +46,8 @@
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
     transition: background 0.25s, color 0.25s;
   }
   .wrap { max-width: 680px; margin: 0 auto; padding: 0 20px 64px; }
@@ -57,11 +62,19 @@
   .brand span { color: var(--accent); }
   #themeBtn {
     background: none; border: 1px solid var(--border); color: var(--text-dim);
-    width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
-    font-size: 16px; display: grid; place-items: center;
-    transition: border-color 0.2s, color 0.2s;
+    width: 44px; height: 44px; border-radius: 10px; cursor: pointer;
+    font-size: 18px; display: grid; place-items: center;
+    transition: border-color 0.2s, color 0.2s, transform 0.1s;
+    user-select: none;
   }
   #themeBtn:hover { border-color: var(--accent); color: var(--accent); }
+  #themeBtn:active { transform: scale(0.95); }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    border-color: var(--accent) !important;
+  }
 
   h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
   .lede { color: var(--text-dim); font-size: 15px; margin-bottom: 32px; }
@@ -87,28 +100,44 @@
     font-size: 15px;
     font-family: inherit;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  #idInput:focus { border-color: var(--accent); }
+  #idInput:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   #idInput::placeholder { color: var(--text-dim); opacity: 0.7; }
+  #idInput::-webkit-outer-spin-button,
+  #idInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  #idInput[type=number] { -moz-appearance: textfield; }
+
   button.primary {
     background: var(--accent);
-    color: #fff;
+    color: var(--accent-text);
     border: none;
     border-radius: 10px;
     padding: 11px 20px;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     font-family: inherit;
     cursor: pointer;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.1s;
     white-space: nowrap;
+    user-select: none;
   }
-  button.primary:hover { opacity: 0.88; }
+  button.primary:hover { opacity: 0.92; }
+  button.primary:active { transform: scale(0.98); }
 
   .result { margin-top: 16px; display: none; }
   .result.show { display: block; }
-  .result.error { border-left: 3px solid var(--err); padding-left: 12px; color: var(--err); font-size: 14px; }
+  .result.error {
+    border-left: 3px solid var(--err);
+    background: rgba(248, 81, 73, 0.08);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    color: var(--err);
+    font-size: 14px;
+  }
   .result.ok .linkbox {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -119,6 +148,20 @@
     font-size: 13px;
     color: var(--accent);
     position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .result.ok .linkbox:hover {
+    border-color: var(--accent);
+    background: var(--bg-softer);
+  }
+  .result.ok .linkbox::after {
+    content: "Нажмите, чтобы скопировать";
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 6px;
   }
   .result .hint { color: var(--text-dim); font-size: 13px; margin-top: 10px; }
   .copybtn {
@@ -132,10 +175,12 @@
     font-family: inherit;
     font-weight: 500;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, transform 0.1s, background-color 0.2s;
+    user-select: none;
   }
   .copybtn:hover { border-color: var(--accent); }
-  .copybtn.done { color: var(--ok); }
+  .copybtn:active { transform: scale(0.97); }
+  .copybtn.done { color: var(--ok); border-color: var(--ok); background: rgba(63, 185, 80, 0.12); }
 
   /* FAQ */
   .faq h2 { font-size: 17px; margin-bottom: 16px; }
@@ -155,6 +200,7 @@
     cursor: pointer;
     list-style: none;
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    user-select: none;
   }
   summary::-webkit-details-marker { display: none; }
   summary::after {
@@ -204,6 +250,8 @@
   }
 
   @media (max-width: 480px) {
+    .wrap { padding: 0 16px 48px; }
+    .card { padding: 20px 16px; }
     .row { flex-direction: column; }
     button.primary { width: 100%; }
     h1 { font-size: 22px; }
@@ -219,14 +267,14 @@
   </header>
 
   <h1>Всё, что нужно знать</h1>
-  <p class="lede">Своя ссылка на подключение, ответы на частые вопросы и что делать, если что-то сломалось.</p>
+  <p class="lede">Своя ссылка на подключение, ответы на частые вопросы и что делать при неполадках.</p>
 
   <!-- Подписка -->
   <section class="card">
     <h2>Моя ссылка на подключение</h2>
     <p class="sub">Введите свой ID (он указан в вашей подписке в приложении). Нажмите «Получить».</p>
     <div class="row">
-      <input id="idInput" type="number" inputmode="numeric" placeholder="Ваш ID (число, например 5)" autocomplete="off" min="1">
+      <input id="idInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Ваш ID (число, например 5)" autocomplete="off">
       <button class="primary" id="getBtn">Получить ссылку</button>
     </div>
     <div class="result" id="result"></div>
@@ -240,8 +288,8 @@
       <summary>Как подключиться?</summary>
       <div class="ans">
         <p>1. Получите свою ссылку в блоке выше (нужен ваш ID).</p>
-        <p>2. Откройте клиентское приложение и выберите «Добавить подписку» (или «Add subscription»).</p>
-        <p>3. Вставьте ссылку в поле и подтвердите. Список серверов подгрузится сам — выберите любой и нажмите «Подключить».</p>
+        <p>2. Откройте клиентское приложение и выберите «Добавить подписку» (Add subscription).</p>
+        <p>3. Вставьте ссылку в поле и подтвердите. Список серверов подгрузится автоматически: выберите любой и нажмите «Подключить».</p>
       </div>
     </details>
 
@@ -258,9 +306,9 @@
     </details>
 
     <details>
-      <summary>Где взять своё ID?</summary>
+      <summary>Где взять свой ID?</summary>
       <div class="ans">
-        <p>ID указан в подписке — откройте приложение, где у вас уже вставлена ссылка, и посмотрите там. Если не нашли — напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, я напомню.</p>
+        <p>ID указан в параметрах вашей подписки в приложении. Если не нашли, напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, я напомню.</p>
       </div>
     </details>
 
@@ -270,31 +318,31 @@
         <p>Пройдите по шагам:</p>
         <ol>
           <li>Проверьте обычное интернет-соединение (откройте любой сайт без VPN).</li>
-          <li>Убедитесь, что вставили именно свою ссылку (из блока выше, а не чужую).</li>
-          <li>Обновите подписку в приложении: обычно кнопка «Обновить» / «Refresh» рядом со списком серверов.</li>
-          <li>Попробуйте выбрать другой сервер из списка — один может быть временно перегружен.</li>
-          <li>Перезапустите приложение, в крайнем случае — телефон.</li>
+          <li>Убедитесь, что вставили именно свою ссылку из блока выше.</li>
+          <li>Обновите подписку в приложении: кнопка «Обновить» / «Refresh» рядом со списком серверов.</li>
+          <li>Попробуйте выбрать другой сервер из списка: текущий может быть временно перегружен.</li>
+          <li>Перезапустите приложение (или перезагрузите телефон).</li>
         </ol>
-        <p>Если ничего не помогло — напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, я помогу разобраться (укажите название приложения, какой сервер пробовали, есть ли ошибка на экране).</p>
+        <p>Если ничего не помогло, напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>: я помогу разобраться (укажите название приложения, сервер и текст ошибки).</p>
       </div>
     </details>
 
     <details>
       <summary>Связь работает плохо: тормозит, обрывается</summary>
       <div class="ans">
-        <p>Почти всегда помогает смена сервера — выберите другой из списка и подключитесь заново. Нагрузка на серверы неравномерна, и свободный обычно есть.</p>
-        <p>Также проверьте, что у вас сам Wi-Fi/мобильный интернет работает нормально — VPN не улучшает базовое соединение, а только его перенаправляет.</p>
+        <p>Почти всегда помогает смена сервера: выберите другой из списка и подключитесь заново. Нагрузка на узлы распределяется неравномерно, свободный сервер обычно доступен.</p>
+        <p>Также проверьте работу домашнего Wi-Fi или мобильной сети: VPN не ускоряет базовый канал, а защищает и перенаправляет трафик.</p>
       </div>
     </details>
 
     <details>
       <summary>Обновил подписку, но ничего не поменялось</summary>
       <div class="ans">
-        <p>После продления сделайте так:</p>
+        <p>После продления сделайте следующее:</p>
         <ol>
-          <li>В приложении нажмите «Обновить подписку» — не просто перезапустите, а именно обновите.</li>
-          <li>Подождите 1–2 минуты и проверьте список серверов: сроки и доступность должны обновиться.</li>
-          <li>Если срок в приложении всё ещё просрочен — напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>, укажите ваш ID — я проверю со своей стороны.</li>
+          <li>В приложении нажмите «Обновить подписку» (именно обновление списка, а не простой перезапуск).</li>
+          <li>Подождите 1–2 минуты и проверьте список серверов: сроки и доступность обновятся.</li>
+          <li>Если срок всё ещё отображается старым, напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a> с вашим ID, я проверю со своей стороны.</li>
         </ol>
       </div>
     </details>
@@ -302,7 +350,7 @@
     <details>
       <summary>Потерял доступ / сменил телефон, что теперь?</summary>
       <div class="ans">
-        <p>Ничего страшного: ваша подписка не привязана к телефону. Установите приложение на новом, получите свою ссылку в блоке выше по ID и подключитесь заново. Старое устройство при этом перестанет засчитываться.</p>
+        <p>Ничего страшного: подписка не привязана к конкретному устройству. Установите приложение на новый телефон, введите свой ID в блоке выше и добавьте ссылку. Старое устройство при этом перестанет засчитываться.</p>
       </div>
     </details>
   </section>
@@ -310,7 +358,7 @@
   <!-- Контакты -->
   <div class="contact">
     <strong>Не нашли ответ?</strong>
-    Напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>. Укажите свой ID и опишите проблему — помогу.
+    Напишите мне на <a href="mailto:lumbra2010@gmail.com">lumbra2010@gmail.com</a>. Укажите свой ID и опишите проблему, я помогу.
   </div>
 
   <footer>Обновления подписки и изменения в работе появляются здесь первыми.</footer>
@@ -394,7 +442,7 @@ async function lookup() {
   try {
     const link = await fetchUserLink(id);
     if (!link) {
-      return showError('ID ' + id + ' не найден. Проверьте номер — или напишите lumbra2010@gmail.com.');
+      return showError('ID ' + id + ' не найден. Проверьте номер или напишите на lumbra2010@gmail.com.');
     }
 
     showLink(link);
@@ -406,12 +454,14 @@ async function lookup() {
 function showLink(link) {
   result.className = 'result show ok';
   result.innerHTML =
-    '<div class="linkbox" id="linkBox">' + escapeHtml(link) + '</div>' +
+    '<div class="linkbox" id="linkBox" title="Нажмите, чтобы скопировать">' + escapeHtml(link) + '</div>' +
     '<button class="copybtn" id="copyBtn">📋 Скопировать ссылку</button>' +
-    '<div class="hint">Вставьте её в приложении в поле «Подписка» (Add subscription) — и подключайтесь.</div>';
-  document.getElementById('copyBtn').addEventListener('click', function () {
-    copyLink(link, this);
-  });
+    '<div class="hint">Вставьте её в приложении в поле «Подписка» (Add subscription) и подключайтесь.</div>';
+
+  const copyBtn = document.getElementById('copyBtn');
+  const linkBox = document.getElementById('linkBox');
+  copyBtn.addEventListener('click', function () { copyLink(link, copyBtn); });
+  linkBox.addEventListener('click', function () { copyLink(link, copyBtn); });
 }
 
 function showError(msg) {
@@ -419,33 +469,33 @@ function showError(msg) {
   result.textContent = msg;
 }
 
-  function copyLink(text, btn) {
-    const done = () => {
-      btn.textContent = '✓ Скопировано';
-      btn.classList.add('done');
-      setTimeout(() => { btn.textContent = '📋 Скопировать ссылку'; btn.classList.remove('done'); }, 2000);
-    };
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
-    } else {
-      fallbackCopy(text, done);
-    }
+function copyLink(text, btn) {
+  const done = () => {
+    btn.textContent = '✓ Скопировано';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = '📋 Скопировать ссылку'; btn.classList.remove('done'); }, 2000);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
   }
+}
 
-  function fallbackCopy(text, done) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); done(); } catch (e) { alert('Скопируйте вручную: ' + text); }
-    document.body.removeChild(ta);
-  }
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) { alert('Скопируйте вручную: ' + text); }
+  document.body.removeChild(ta);
+}
 
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  }
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 </script>
 </body>
 </html>
