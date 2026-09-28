@@ -182,6 +182,52 @@
   .copybtn:active { transform: scale(0.97); }
   .copybtn.done { color: var(--ok); border-color: var(--ok); background: rgba(63, 185, 80, 0.12); }
 
+  /* News */
+  .news { margin-bottom: 40px; }
+  .news h2 { font-size: 17px; margin-bottom: 16px; }
+  .news-list { display: flex; flex-direction: column; gap: 12px; }
+  .news-item {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: border-color 0.2s;
+  }
+  .news-item:hover { border-color: var(--accent); }
+  .news-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .news-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .news-date {
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+  .news-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .news-text {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    white-space: pre-line;
+    word-break: break-word;
+  }
+
   /* FAQ */
   .faq h2 { font-size: 17px; margin-bottom: 16px; }
   details {
@@ -278,6 +324,12 @@
       <button class="primary" id="getBtn">Получить ссылку</button>
     </div>
     <div class="result" id="result"></div>
+  </section>
+
+  <!-- Новости -->
+  <section class="news" id="newsSection" style="display: none;">
+    <h2>Новости и обновления</h2>
+    <div class="news-list" id="newsList"></div>
   </section>
 
   <!-- FAQ -->
@@ -494,8 +546,52 @@ function fallbackCopy(text, done) {
 }
 
 function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+
+// ---------- Новости ----------
+async function loadNews() {
+  const section = document.getElementById('newsSection');
+  const container = document.getElementById('newsList');
+  if (!section || !container) return;
+
+  try {
+    const res = await fetch('news.json?v=' + Date.now());
+    if (!res.ok) return;
+    const items = await res.json();
+    if (!Array.isArray(items) || items.length === 0) return;
+
+    container.innerHTML = items.map(item => `
+      <article class="news-item">
+        <div class="news-meta">
+          <span class="news-tag">${escapeHtml(item.tag || 'Обновление')}</span>
+          <time class="news-date">${formatDate(item.date)}</time>
+        </div>
+        <h3 class="news-title">${escapeHtml(item.title)}</h3>
+        <p class="news-text">${escapeHtml(item.text)}</p>
+      </article>
+    `).join('');
+
+    section.style.display = 'block';
+  } catch (e) {
+    // В случае ошибки раздел просто остаётся скрытым
+  }
+}
+
+function formatDate(isoStr) {
+  if (!isoStr) return '';
+  try {
+    const parts = isoStr.split('-');
+    if (parts.length !== 3) return isoStr;
+    const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    const month = months[parseInt(parts[1], 10) - 1] || parts[1];
+    return parseInt(parts[2], 10) + ' ' + month + ' ' + parts[0];
+  } catch (e) {
+    return isoStr;
+  }
+}
+
+loadNews();
 </script>
 </body>
 </html>
